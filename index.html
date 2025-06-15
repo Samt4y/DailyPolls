@@ -5,200 +5,119 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Daily Poll Game</title>
 <style>
-  /* Reset & base */
-  * {
-    box-sizing: border-box;
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    color: white;
+    text-align: center;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
-  body {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  #username-container, #main-content {
+    max-width: 400px;
+    margin: 50px auto;
+    background: rgba(255 255 255 / 0.1);
     padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
   }
-  #username-screen {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  #username-box {
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 25px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    text-align: center;
-    width: 320px;
-    color: #333;
-  }
-  #username-box h2 {
-    margin-bottom: 20px;
-    font-weight: 700;
-    font-size: 1.6rem;
-  }
-  #username-input {
-    width: 100%;
-    padding: 12px 15px;
-    border-radius: 15px;
-    border: 2px solid #667eea;
-    font-size: 1.1rem;
-    outline: none;
-    transition: border-color 0.3s ease;
-  }
-  #username-input:focus {
-    border-color: #764ba2;
-  }
-  #start-btn {
-    margin-top: 20px;
-    width: 100%;
-    background: #667eea;
+  input[type="text"] {
+    width: 80%;
+    padding: 10px;
     border: none;
-    padding: 14px 0;
-    border-radius: 15px;
-    font-size: 1.1rem;
-    font-weight: 700;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+  }
+  button {
+    background: #6c63ff;
+    border: none;
+    padding: 12px 25px;
     color: white;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 6px 15px rgba(102,126,234,0.6);
+    font-weight: 600;
     transition: background 0.3s ease;
   }
-  #start-btn:hover {
-    background: #5a6dcf;
+  button:hover {
+    background: #574dcf;
   }
-
-  /* Main content container */
-  #main-content {
-    background: #fff;
-    color: #333;
-    border-radius: 25px;
-    padding: 30px 40px;
-    max-width: 600px;
-    width: 100%;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    display: none; /* hidden until username entered */
-    flex-direction: column;
-  }
-
-  /* Header with username & gems */
-  #user-info {
-    font-weight: 700;
+  #poll-question {
     font-size: 1.3rem;
     margin-bottom: 15px;
   }
-
-  #gems-count {
-    font-weight: 700;
-    color: #667eea;
-  }
-
-  /* Poll question */
-  #poll-question {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 25px;
-  }
-
-  /* Poll options */
-  .poll-option {
-    background: #667eea;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 20px;
-    margin-bottom: 15px;
-    font-weight: 600;
+  .option-button {
+    display: block;
+    margin: 8px auto;
+    padding: 10px 15px;
+    width: 80%;
+    border-radius: 10px;
     font-size: 1.1rem;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
-    transition: background 0.3s ease, transform 0.2s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .poll-option:hover {
-    background: #5a6dcf;
-    transform: scale(1.03);
-  }
-
-  /* Percentage bar inside option */
-  .percentage-bar {
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    transition: width 1.2s ease;
-    z-index: 0;
-  }
-
-  .poll-option span {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Countdown timer */
-  #countdown-timer {
-    font-weight: 700;
-    color: #764ba2;
-    margin-top: 20px;
-    font-size: 1.2rem;
-  }
-
-  /* Leaderboard button */
-  #leaderboard-btn {
-    margin-top: 30px;
-    background: #764ba2;
+    background: #7f8affcc;
+    color: #fff;
     border: none;
-    padding: 15px 40px;
-    border-radius: 25px;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 8px 25px rgba(118,75,162,0.6);
     transition: background 0.3s ease;
   }
+  .option-button:hover {
+    background: #5f68ff;
+  }
+  .result-bar {
+    margin: 10px auto;
+    width: 80%;
+    background: #fff3;
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: left;
+    font-weight: 600;
+    color: #222;
+  }
+  .result-bar .label {
+    padding: 5px 10px;
+  }
+  .result-bar .bar {
+    height: 30px;
+    background: #6c63ff;
+    color: white;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    transition: width 1s ease;
+    border-radius: 0 10px 10px 0;
+  }
+  #gem-count {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  #leaderboard-btn {
+    margin-top: 25px;
+    background: #ff6584;
+  }
   #leaderboard-btn:hover {
-    background: #5a3e98;
+    background: #e14267;
   }
 </style>
 </head>
 <body>
 
-  <!-- Username input overlay -->
-  <div id="username-screen">
-    <div id="username-box">
-      <h2>Enter your username</h2>
-      <input id="username-input" type="text" placeholder="Your username" />
-      <button id="start-btn">Start</button>
-    </div>
-  </div>
+<div id="username-container">
+  <!-- Username input will be rendered here -->
+</div>
 
-  <!-- Main content -->
-  <div id="main-content" style="display: none;">
-    <div id="user-info">Welcome, <span id="username-display"></span>! Gems: <span id="gems-count">0</span></div>
+<div id="main-content" style="display:none;">
+  <div id="poll-question"></div>
+  <div id="poll-options"></div>
+  <div id="gem-count"></div>
+  <button id="leaderboard-btn">View Leaderboard</button>
+</div>
 
-    <h3 id="poll-question">What is the capital of Scotland?</h3>
-
-    <div id="poll-options">
-      <div class="poll-option"><span>Edinburgh</span><div class="percentage-bar" style="width: 0%"></div></div>
-      <div class="poll-option"><span>Glasgow</span><div class="percentage-bar" style="width: 0%"></div></div>
-      <div class="poll-option"><span>Aberdeen</span><div class="percentage-bar" style="width: 0%"></div></div>
-      <div class="poll-option"><span>Dundee</span><div class="percentage-bar" style="width: 0%"></div></div>
-    </div>
-
-    <div id="countdown-timer">Next poll in: --:--:--</div>
-
-    <button id="leaderboard-btn">Leaderboard</button>
-  </div>
-
-  <script src="script.js"></script>
+<script src="client.js"></script>
+<script>
+  // Redirect to leaderboard page when clicked
+  document.getElementById('leaderboard-btn').onclick = () => {
+    window.location.href = 'leaderboard.html';
+  };
+</script>
 </body>
 </html>
