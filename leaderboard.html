@@ -1,118 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Leaderboard</title>
-  <style>
-    /* Same font and background as main page */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: white;
-    }
-
-    h1 {
-      font-weight: 700;
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-      text-shadow: 0 0 8px rgba(0,0,0,0.3);
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      width: 100%;
-      max-width: 500px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      backdrop-filter: blur(10px);
-    }
-
-    li {
-      display: flex;
-      justify-content: space-between;
-      padding: 16px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.3);
-      font-weight: 600;
-      font-size: 1.2rem;
-      cursor: default;
-      transition: background-color 0.3s ease;
-    }
-    li:last-child {
-      border-bottom: none;
-    }
-    li:hover {
-      background-color: rgba(255,255,255,0.1);
-    }
-
-    .no-players {
-      padding: 40px;
-      font-size: 1.3rem;
-      text-align: center;
-      color: #eee;
-    }
-
-    button {
-      margin-top: 30px;
-      background: #fff;
-      border: none;
-      color: #764ba2;
-      font-weight: 700;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    button:hover {
-      background-color: #764ba2;
-      color: white;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Leaderboard</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  #leaderboard-container {
+    max-width: 400px;
+    margin: 50px auto;
+    background: rgba(255 255 255 / 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  }
+  h2 {
+    margin-bottom: 20px;
+  }
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  li {
+    background: rgba(255 255 255 / 0.3);
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  button {
+    background: #ff6584;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    margin-top: 20px;
+  }
+  button:hover {
+    background: #e14267;
+  }
+</style>
 </head>
 <body>
-  <h1>Leaderboard</h1>
-  <ul id="leaderboard-list"></ul>
-  <button id="back-btn">Back to Poll</button>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const leaderboardList = document.getElementById('leaderboard-list');
-      const backBtn = document.getElementById('back-btn');
+<div id="leaderboard-container">
+  <h2>Leaderboard</h2>
+  <ul id="leaderboard-list">
+    <!-- leaderboard entries here -->
+  </ul>
+  <button id="reset-btn">Reset Leaderboard</button>
+  <br /><br />
+  <button onclick="window.location.href='index.html'">Back to Poll</button>
+</div>
 
-      let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || {};
-
-      const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]);
-
-      if (sorted.length === 0) {
-        const noPlayers = document.createElement('div');
-        noPlayers.className = 'no-players';
-        noPlayers.textContent = 'No players yet. Be the first to earn gems!';
-        leaderboardList.appendChild(noPlayers);
-      } else {
-        sorted.forEach(([user, gems]) => {
-          const li = document.createElement('li');
-          li.textContent = user;
-          const gemSpan = document.createElement('span');
-          gemSpan.textContent = `${gems} 💎`;
-          li.appendChild(gemSpan);
-          leaderboardList.appendChild(li);
-        });
-      }
-
-      backBtn.addEventListener('click', () => {
-        window.location.href = 'index.html';
-      });
+<script>
+  async function loadLeaderboard() {
+    const res = await fetch('https://dailypollbackend.onrender.com/api/leaderboard');
+    const data = await res.json();
+    const list = document.getElementById('leaderboard-list');
+    list.innerHTML = '';
+    if(data.length === 0){
+      list.innerHTML = '<li>No players yet</li>';
+      return;
+    }
+    data.forEach(({ username, gems }) => {
+      const li = document.createElement('li');
+      li.textContent = `${username}: ${gems} gems`;
+      list.appendChild(li);
     });
-  </script>
+  }
+
+  async function resetLeaderboard() {
+    if(!confirm('Are you sure you want to reset the leaderboard?')) return;
+    await fetch('https://dailypollbackend.onrender.com/api/reset', { method: 'POST' });
+    loadLeaderboard();
+  }
+
+  document.getElementById('reset-btn').onclick = resetLeaderboard;
+
+  window.onload = loadLeaderboard;
+</script>
+
 </body>
 </html>
